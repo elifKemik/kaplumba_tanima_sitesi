@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caretta Caretta Tanıma Sistemi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100">
+  <div class="mx-auto max-w-6xl px-6 py-10">
+    <header class="mb-10 text-center">
+      <p class="text-sm uppercase tracking-[0.4em] text-cyan-400">Caretta Caretta Projesi</p>
+      <h1 class="mt-4 text-5xl font-semibold tracking-tight text-white">Caretta Caretta Tanıma Sistemi</h1>
+      <p class="mt-3 text-slate-300">Kaplumbağa yüz tanımayı güvenlik ve kalite adımlarıyla analiz eden modern arayüz.</p>
+    </header>
+
+    <main class="grid gap-8 lg:grid-cols-[0.65fr_0.35fr]">
+      <section class="rounded-3xl border border-slate-700 bg-slate-950/80 p-8 shadow-[0_25px_60px_-30px_rgba(15,23,42,0.8)]">
+        <div class="mb-6">
+          <h2 class="text-2xl font-semibold text-white">Fotoğraf Yükle</h2>
+          <p class="mt-2 text-slate-400">Caretta Caretta fotoğrafınızı seçin veya sürükleyip bırakın. Analiz ardından sonuçlar burada gösterilecek.</p>
+        </div>
+
+        <div id="uploadArea" class="relative flex min-h-[240px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-cyan-500/50 bg-slate-800 p-6 text-center transition hover:border-cyan-400 hover:bg-slate-900">
+          <div class="space-y-4">
+            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-cyan-500/10 text-cyan-300">
+              <span class="text-3xl">📷</span>
+            </div>
+            <div>
+              <p class="text-lg font-medium text-white">Dosyayı buraya bırakın</p>
+              <p class="text-sm text-slate-400">ya da</p>
+            </div>
+            <button id="browseButton" class="rounded-full bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">Dosya Seç</button>
+            <p class="text-sm text-slate-500">Sadece .jpg veya .png formatları kabul edilir.</p>
+          </div>
+          <input id="fileInput" type="file" accept="image/png, image/jpeg" class="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+        </div>
+
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="space-y-1">
+            <p class="text-sm text-slate-400">Seçili dosya:</p>
+            <p id="fileName" class="text-base font-medium text-white">Henüz dosya seçilmedi</p>
+          </div>
+          <button id="analyzeButton" class="rounded-3xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">Analiz Et</button>
+        </div>
+
+        <div id="resultArea" class="mt-10 rounded-3xl border border-slate-700 bg-slate-900 p-6 text-slate-200 hidden">
+          <h3 class="text-xl font-semibold text-white">Analiz Sonucu</h3>
+          <div class="mt-4 space-y-3 text-sm text-slate-300">
+            <p id="summaryText">Bekleniyor...</p>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-slate-800 p-4">
+                <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Parlaklık</p>
+                <p id="brightnessValue" class="mt-2 text-3xl font-semibold text-white">-</p>
+              </div>
+              <div class="rounded-2xl bg-slate-800 p-4">
+                <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Netlik</p>
+                <p id="sharpnessValue" class="mt-2 text-3xl font-semibold text-white">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rounded-3xl border border-slate-700 bg-slate-950/80 p-8 shadow-[0_25px_60px_-30px_rgba(15,23,42,0.8)]">
+        <h2 class="text-2xl font-semibold text-white">Süreç Logları</h2>
+        <p class="mt-2 text-slate-400">Güvenlik, Araştırmacı ve Tanımlayıcı ajanların adım adım raporu.</p>
+        <div id="logList" class="mt-6 space-y-4 text-sm text-slate-300">
+          <div class="rounded-2xl bg-slate-900 p-4">
+            <p class="font-semibold text-white">Güvenlik (Validator)</p>
+            <p id="validatorLog" class="mt-2 text-slate-400">Henüz işlem yapılmadı.</p>
+          </div>
+          <div class="rounded-2xl bg-slate-900 p-4">
+            <p class="font-semibold text-white">Araştırmacı (Researcher)</p>
+            <p id="researcherLog" class="mt-2 text-slate-400">Henüz işlem yapılmadı.</p>
+          </div>
+          <div class="rounded-2xl bg-slate-900 p-4">
+            <p class="font-semibold text-white">Tanımlayıcı (Identifier)</p>
+            <p id="identifierLog" class="mt-2 text-slate-400">Henüz işlem yapılmadı.</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const browseButton = document.getElementById('browseButton');
+    const analyzeButton = document.getElementById('analyzeButton');
+    const fileName = document.getElementById('fileName');
+    const resultArea = document.getElementById('resultArea');
+    const summaryText = document.getElementById('summaryText');
+    const brightnessValue = document.getElementById('brightnessValue');
+    const sharpnessValue = document.getElementById('sharpnessValue');
+    const validatorLog = document.getElementById('validatorLog');
+    const researcherLog = document.getElementById('researcherLog');
+    const identifierLog = document.getElementById('identifierLog');
+
+    let selectedFile = null;
+
+    browseButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (event) => {
+      selectedFile = event.target.files[0];
+      if (selectedFile) {
+        fileName.textContent = selectedFile.name;
+        analyzeButton.disabled = false;
+      }
+    });
+
+    analyzeButton.addEventListener('click', async () => {
+      if (!selectedFile) return;
+
+      resultArea.classList.add('hidden');
+      summaryText.textContent = 'Analiz yapılıyor...';
+      brightnessValue.textContent = '-';
+      sharpnessValue.textContent = '-';
+      validatorLog.textContent = 'Validator kontrol ediliyor...';
+      researcherLog.textContent = 'Researcher analiz yapılıyor...';
+      identifierLog.textContent = 'Identifier çalıştırılıyor...';
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          summaryText.textContent = result.message;
+          brightnessValue.textContent = result.prediction.brightness ?? '-';
+          sharpnessValue.textContent = result.prediction.sharpness ?? '-';
+          validatorLog.textContent = 'Güvenlik kontrolü tamamlandı: Geçerli dosya.';
+          researcherLog.textContent = 'Araştırma tamamlandı: Görüntü kalitesi yeterli.';
+          identifierLog.textContent = `Tanımlayıcı sonuç: ${result.prediction.id} (Doğruluk: ${result.prediction.accuracy}%)`;
+        } else if (result.status === 'warning') {
+          summaryText.textContent = result.message;
+          validatorLog.textContent = 'Güvenlik kontrolü tamamlandı: Dosya geçerli.';
+          researcherLog.textContent = 'Araştırma tamamlandı: Kalite sorunu tespit edildi.';
+          if (result.prediction) {
+            identifierLog.textContent = `Tanımlayıcı sonuç: ${result.prediction.id} (Doğruluk: ${result.prediction.accuracy}%)`;
+          } else {
+            identifierLog.textContent = 'Tanımlayıcı çalıştırıldı, sonuç mevcut değil.';
+          }
+        } else {
+          summaryText.textContent = result.message;
+          validatorLog.textContent = 'Güvenlik kontrolü başarısız.';
+          researcherLog.textContent = 'Araştırma gerçekleştirilemedi.';
+          if (result.prediction) {
+            identifierLog.textContent = `Tanımlayıcı sonuç: ${result.prediction.id} (Doğruluk: ${result.prediction.accuracy}%)`;
+          } else {
+            identifierLog.textContent = 'Tanımlayıcı çalıştırılmadı.';
+          }
+        }
+      } catch (error) {
+        summaryText.textContent = 'Sunucuya bağlanırken hata oluştu.';
+        validatorLog.textContent = 'Kontrol yapılamadı.';
+        researcherLog.textContent = 'Analiz yapılamadı.';
+        identifierLog.textContent = 'Tanımlayıcı çalıştırılamadı.';
+      } finally {
+        resultArea.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

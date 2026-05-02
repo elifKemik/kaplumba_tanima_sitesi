@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+jinja2
+opencv-python
+numpy
+scikit-learn
+albumentations
+pandas
+ultralytics
+# tensorflow kaldırıldı
