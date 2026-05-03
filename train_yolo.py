@@ -1,4 +1,5 @@
 from ultralytics import YOLO
+from config import Config
 import os
 
 def train_yolo():
@@ -8,11 +9,16 @@ def train_yolo():
         raise ValueError("Data klasörü bulunamadı.")
 
     # Model yükle ve eğit (data klasörü doğrudan kullan)
-    model = YOLO('yolov8n-cls.pt')
-    model.train(data='./data/', epochs=30, imgsz=224, batch=16)
+    model = YOLO(Config.MODEL.MODEL_PATH)
+    model.train(
+        data='./data/',
+        epochs=Config.MODEL.EPOCHS,
+        imgsz=Config.MODEL.IMG_SIZE,
+        batch=Config.MODEL.BATCH_SIZE
+    )
 
     # Eğitilmiş modeli kaydet
-    model.save('yolo_trained.pt')
+    model.save(Config.MODEL.TRAINED_MODEL_PATH)
     print("YOLO eğitimi tamamlandı.")
 
 if __name__ == "__main__":

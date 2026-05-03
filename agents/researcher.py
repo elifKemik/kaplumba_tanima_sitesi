@@ -1,8 +1,24 @@
 import cv2
 import numpy as np
 from interfaces.iresearcher import IResearcher
+from agents.base_agent import BaseAgent
 
-class Researcher(IResearcher):
+class Researcher(BaseAgent, IResearcher):
+    def get_name(self) -> str:
+        return "Researcher"
+    
+    def process(self, data: dict) -> dict:
+        """Pipeline için process metodu"""
+        file_path = data.get("file_path")
+        analysis = self.analyze(file_path)
+        data["quality_analysis"] = analysis
+        
+        if analysis.get("status") == "fail":
+            data["stop"] = True
+            data["error"] = analysis.get("message")
+        
+        return data
+    
     def analyze(self, file_path: str) -> dict:
         image = cv2.imread(file_path)
         if image is None:
