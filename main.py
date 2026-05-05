@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.templating import Jinja2Templates
+import uvicorn
 from services.turtle_service import TurtleService
 from agents.validator import Validator
 from agents.researcher import Researcher
@@ -47,3 +48,6 @@ async def root():
     with open("templates/index.html", "r", encoding="utf-8") as f:
         content = f.read()
     return content
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

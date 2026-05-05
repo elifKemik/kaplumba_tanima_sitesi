@@ -56,8 +56,10 @@ http://localhost:8000
 | Metrik | Değer |
 |--------|-------|
 | Toplam kaplumbağa | 44 |
-| Toplam fotoğraf | 1096 |
-| Model doğruluk (30 epoch) | %53 |
+| Toplam fotoğraf (eğitim + doğrulama) | 1553 |
+| Eğitim fotoğrafı | 1103 |
+| Doğrulama fotoğrafı | 450 |
+| Model doğruluk (30 epoch) | %84.9 |
 | Threshold | %45 |
 
 ---

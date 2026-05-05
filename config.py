@@ -21,7 +21,7 @@ class ValidationConfig:
 class ModelConfig:
     """Model training and prediction configuration"""
     # Model paths
-    MODEL_PATH = "yolov8n-cls.pt"
+    MODEL_PATH = "yolov8n-cls.pt"  # küçük model, hızlı hesaplar
     TRAINED_MODEL_PATH = "yolo_trained.pt"
     EMBEDDINGS_PATH = "yolo_embeddings.npy"
     CNN_MODEL_PATH = "turtle_model.h5"
